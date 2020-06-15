@@ -1,29 +1,21 @@
-﻿namespace FluentMigrator.Demo.Migrations
+﻿using FluentMigrator.SqlServer;
+
+namespace FluentMigrator.Demo.Migrations
 {
     [Migration(06072020100000)]
     public class Migration_06072020100000 : Migration
     {
         public override void Down()
         {
-            Delete.Index("IX_Address_EmployeeId").OnTable("Address");
-            Delete.Table("Address");
+            Delete.Table("Employee");
         }
 
         public override void Up()
         {
-            Create.Table("Address")
-                .WithColumn("Id").AsInt32().NotNullable().Identity().PrimaryKey()
-                .WithColumn("Street").AsString().NotNullable()
-                .WithColumn("City").AsString().NotNullable()
-                .WithColumn("State").AsString().NotNullable()
-                .WithColumn("Zip").AsString().Nullable()
-                .WithColumn("EmployeeId").AsInt32().NotNullable().ForeignKey("Employee", "Id");
-
-            Create.Index("IX_Address_EmployeeId")
-                .OnTable("Address")
-                .OnColumn("EmployeeId")
-                .Ascending()
-                .WithOptions().NonClustered();
+            Create.Table("Employee")
+                .WithColumn("Id").AsInt32().NotNullable().Identity(1, 1).PrimaryKey()
+                .WithColumn("Name").AsString().NotNullable()
+                .WithColumn("Age").AsInt32().Nullable();
         }
     }
 }

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
+using FluentMigrator.Demo.Migrations;
 using FluentMigrator.Runner;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -32,7 +33,7 @@ namespace FluentMigrator.Demo
             services.AddFluentMigratorCore()
                 .ConfigureRunner(config => 
                     config.AddSqlServer()
-                    .WithGlobalConnectionString("Persist Security Info = False; Integrated Security = true; Initial Catalog = TimeManagement; server = .\\SQLEXPRESS")
+                    .WithGlobalConnectionString("Persist Security Info = False; Integrated Security = true; Initial Catalog = Demo; server = .\\SQLEXPRESS")
                     .ScanIn(Assembly.GetExecutingAssembly()).For.All())
                 .AddLogging(config => config.AddFluentMigratorConsole());
         }
@@ -56,9 +57,12 @@ namespace FluentMigrator.Demo
                 endpoints.MapControllers();
             });
 
+            Database.Migrate("Persist Security Info = False; Integrated Security = true; Initial Catalog = master; server = .\\SQLEXPRESS",
+                "Demo");
+
             using var scope = app.ApplicationServices.CreateScope();
             var migrator = scope.ServiceProvider.GetService<IMigrationRunner>();
-            migrator.MigrateDown(0);
+            migrator.MigrateUp();
         }
     }
 }
